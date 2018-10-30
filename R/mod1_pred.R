@@ -3,6 +3,7 @@ mod1_pred <- function(object,
                       random,
                       id_pred = NULL,
                       id_var,
+                      time_var,
                       data,
                       type = "Smoothing",
                       controls = list(n_sim = 500)){
@@ -18,6 +19,8 @@ mod1_pred <- function(object,
   sigmasq_est <- summary_object$scale
   dof_est     <- summary_object$family[2] %>% as.character %>% str_extract("\\-*\\d+\\.*\\d*") %>% as.numeric
 
+  #data <- data[order(data[, id_var], data[, time_var]), ]
+  
   idlist <- data[, id_var]
 
   id_x <- cbind(idlist, model.matrix(fixed, data))
@@ -69,7 +72,11 @@ mod1_pred <- function(object,
   }
 
   names(U_pred) <- names(Ystar_pred) <- id_pred
-  mget(c("U_pred", "Ystar_pred"))
+  
+  Ystar_res <- mod1_pred_res(x = Ystar_pred, n_sim = controls$n_sim, y = id_y[, 2],
+                             idlist = idlist, time_var = data[, time_var])
+  
+  mget(c("U_pred", "Ystar_pred", "Ystar_res"))
 
 }
 
