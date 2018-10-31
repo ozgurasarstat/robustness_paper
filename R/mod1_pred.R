@@ -6,11 +6,21 @@ mod1_pred <- function(object,
                       time_var,
                       data,
                       type = "Smoothing",
-                      controls = list(n_sim = 500)){
+                      controls = list(n_sim = 500,
+                                      probs = c(0.025, 0.975))){
 
-  suppressMessages(library(tidyverse))
-  suppressMessages(library(stringr))
-  suppressMessages(library(mvtnorm))
+  
+  if(length(controls) < 2){
+    controls_full <- list(n_sim = 500,
+                          probs = c(0.025, 0.975))
+    for(i in 1:2){
+      if(!(names(controls_full)[i] %in% names(controls))){
+        controls[names(controls_full)[i]] <- controls_full[i] 
+      }
+    }
+    
+  }
+  
 
   summary_object <- summary(object)
 
@@ -73,10 +83,13 @@ mod1_pred <- function(object,
 
   names(U_pred) <- names(Ystar_pred) <- id_pred
   
-  Ystar_res <- mod1_pred_res(x = Ystar_pred, n_sim = controls$n_sim, y = id_y[, 2],
-                             idlist = idlist, time_var = data[, time_var])
+  pred.data <- mod1_pred_res(x = Ystar_pred, 
+                             n_sim = controls$n_sim, y = id_y[, 2],
+                             idlist = idlist, 
+                             time_var = data[, time_var], 
+                             probs = controls$probs)
   
-  mget(c("U_pred", "Ystar_pred", "Ystar_res"))
+  mget(c("U_pred", "Ystar_pred", "pred.data"))
 
 }
 

@@ -7,10 +7,6 @@
                       dof = 3.5
                       ){
    
-   suppressMessages(library(tidyverse))
-   library(magic)
-   library(mvtnorm)
-   
    id <- rep(1:nsubj, each = ntime)
    
    t <- rep(0:(ntime - 1), nsubj)

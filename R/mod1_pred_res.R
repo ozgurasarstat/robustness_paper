@@ -1,5 +1,5 @@
 
- mod1_pred_res <- function(x, y, n_sim, idlist, time_var){
+ mod1_pred_res <- function(x, y, n_sim, idlist, time_var, probs){
    
    nsubj <- length(x)
    
@@ -8,14 +8,14 @@
    for(i in 1:nsubj){
      
      out <- rbind(out, 
-                  do.call(cbind, x[[1]]) %>% 
-                    apply(1, function(x) c(mean(x), median(x), quantile(x, probs = c(0.025, 0.975)))) %>% t
+                  do.call(cbind, x[[i]]) %>% 
+                    apply(1, function(x) c(mean(x), median(x), quantile(x, probs = probs))) %>% t
                   )
      
    }
    
    out <- data.frame(idlist, time_var, y, out)
-   names(out) <- c("id", "time", "observed", "mean", "median", "2.5%", "97.5%")
+   names(out) <- c("id", "time", "observed", "mean", "median", "lower", "upper")
    rownames(out) <- NULL
    return(out)
    
